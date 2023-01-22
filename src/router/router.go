@@ -27,5 +27,6 @@ func SetupRoutes(app *fiber.App) {
 
 	// Order
 	order := api.Group("/order")
-	order.Get("/", handler.GetAllOrders)
+	order.Get("/", middlewares.Protected(), handler.GetAllOrders)
+	order.Post("/import", middlewares.Protected(), handler.ImportOrders)
 }
