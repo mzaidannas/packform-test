@@ -2,6 +2,7 @@ package handler
 
 import (
 	"errors"
+	"net/mail"
 	"packform-test/config"
 	"packform-test/src/database"
 	"packform-test/src/models"
@@ -20,32 +21,49 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-func getCustomerByLogin(e string) (*models.Customer, error) {
+func getUserByEmail(e string) (*models.User, error) {
 	db := database.DB
-	var customer models.Customer
-	if err := db.Where(&models.Customer{Login: e}).Find(&customer).Error; err != nil {
+	var user models.User
+	if err := db.Where(&models.User{Email: e}).Find(&user).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, nil
 		}
 		return nil, err
 	}
-	return &customer, nil
+	return &user, nil
 }
 
-// Login get customer and password
+func getUserByUsername(u string) (*models.User, error) {
+	db := database.DB
+	var user models.User
+	if err := db.Where(&models.User{Username: u}).Find(&user).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &user, nil
+}
+
+func valid(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
+}
+
+// Login get user and password
 func Login(c *fiber.Ctx) error {
 	type LoginInput struct {
 		Identity string `json:"identity"`
 		Password string `json:"password"`
 	}
-	type CustomerData struct {
+	type UserData struct {
 		ID       uint   `json:"id"`
-		Name     string `json:"name"`
-		Login    string `json:"login"`
+		Username string `json:"username"`
+		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 	input := new(LoginInput)
-	var ud CustomerData
+	var ud UserData
 
 	if err := c.BodyParser(&input); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "error", "message": "Error on login request", "data": err})
@@ -53,21 +71,39 @@ func Login(c *fiber.Ctx) error {
 
 	identity := input.Identity
 	pass := input.Password
-	customer, err := new(models.Customer), *new(error)
+	user, email, err := new(models.User), new(models.User), *new(error)
 
-	customer, err = getCustomerByLogin(identity)
-	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Error on login", "data": err})
+	if valid(identity) {
+		email, err = getUserByEmail(identity)
+		if err != nil {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Error on email", "data": err})
+		}
+	} else {
+		user, err = getUserByUsername(identity)
+		if err != nil {
+			return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Error on username", "data": err})
+		}
 	}
 
-	if customer == nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Customer not found", "data": err})
-	} else {
-		ud = CustomerData{
-			ID:       customer.ID,
-			Name:     customer.Name,
-			Login:    customer.Login,
-			Password: customer.Password,
+	if email == nil && user == nil {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "User not found", "data": err})
+	}
+
+	if email != nil {
+		ud = UserData{
+			ID:       email.ID,
+			Username: email.Username,
+			Email:    email.Email,
+			Password: email.Password,
+		}
+
+	}
+	if user != nil {
+		ud = UserData{
+			ID:       user.ID,
+			Username: user.Username,
+			Email:    user.Email,
+			Password: user.Password,
 		}
 	}
 
@@ -78,8 +114,8 @@ func Login(c *fiber.Ctx) error {
 	token := jwt.New(jwt.SigningMethodHS256)
 
 	claims := token.Claims.(jwt.MapClaims)
-	claims["name"] = ud.Name
-	claims["customer_id"] = ud.Login
+	claims["username"] = ud.Username
+	claims["user_id"] = ud.ID
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 
 	t, err := token.SignedString([]byte(config.Config("SECRET")))
