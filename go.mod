@@ -1,6 +1,6 @@
 module packform-test
 
-go 1.17
+go 1.19
 
 require (
 	github.com/goccy/go-json v0.10.0

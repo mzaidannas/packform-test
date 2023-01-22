@@ -31,5 +31,11 @@ func main() {
 
 	router.SetupRoutes(app)
 
+	// Enable request body streaming for CSV imports
+	// Note that this may have consequences if typical requests are larger
+	// than the configured limit as it's uncertain if Fiber will gracefully
+	// handle the streaming if it expects a complete body.
+	app.Server().StreamRequestBody = true
+
 	log.Fatal(app.Listen(":3000"))
 }

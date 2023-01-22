@@ -29,4 +29,24 @@ func SetupRoutes(app *fiber.App) {
 	order := api.Group("/order")
 	order.Get("/", middlewares.Protected(), handler.GetAllOrders)
 	order.Post("/import", middlewares.Protected(), handler.ImportOrders)
+
+	// Customer
+	customer := api.Group("/customer")
+	customer.Get("/", middlewares.Protected(), handler.GetAllCustomers)
+	customer.Post("/import", middlewares.Protected(), handler.ImportCustomers)
+
+	// Company
+	company := api.Group("/company")
+	company.Get("/", middlewares.Protected(), handler.GetAllCompanies)
+	company.Post("/import", middlewares.Protected(), handler.ImportCompanies)
+
+	// OrderItem
+	orderItem := api.Group("/order-item")
+	orderItem.Get("/", middlewares.Protected(), handler.GetAllOrderItems)
+	orderItem.Post("/import", middlewares.Protected(), handler.ImportOrderItems)
+
+	// Delivery
+	delivery := api.Group("/delivery")
+	delivery.Get("/", middlewares.Protected(), handler.GetAllDeliveries)
+	delivery.Post("/import", middlewares.Protected(), handler.ImportDeliveries)
 }
