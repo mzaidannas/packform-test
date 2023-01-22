@@ -18,6 +18,6 @@ func GetAllOrders(c *fiber.Ctx) error {
 
 func ImportOrders(c *fiber.Ctx) error {
 	reader := c.Context().RequestBodyStream()
-	total := repository.BulkCopy("orders", []string{"id", "created_at", "order_name", "customer_id"}, &reader, 10000)
+	total := repository.BulkCopy("orders", []string{"id", "order_date", "order_name", "customer_id"}, &reader, 10000)
 	return c.JSON(fiber.Map{"status": "success", "message": "Companies Imported", "data": total})
 }

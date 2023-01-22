@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"packform-test/config"
+	"strings"
 	"time"
 
 	"github.com/jackc/pgx/v5"
@@ -14,6 +15,7 @@ import (
 
 func BulkCopy(table string, columns []string, reader *io.Reader, batchSize int) int64 {
 	lines := 0
+	loc, _ := time.LoadLocation("Melbourne/Australia")
 	copyTotal := int64(0)
 	batch := make([][]string, 0, batchSize)
 	csvReader := csv.NewReader(*reader)
@@ -60,7 +62,20 @@ func BulkCopy(table string, columns []string, reader *io.Reader, batchSize int) 
 						old := batch[i]
 						new := make([]interface{}, len(old))
 						for k, v := range old {
-							new[k] = v
+							if v == "" {
+								new[k] = nil
+							} else if strings.HasPrefix(v, "{") {
+								v = strings.TrimLeft(v, "{")
+								v = strings.TrimRight(v, "}")
+								new[k] = strings.Split(v, ",")
+							} else {
+								new_val, err := time.ParseInLocation(time.RFC3339, v, loc)
+								if err == nil {
+									new[k] = new_val
+								} else {
+									new[k] = v
+								}
+							}
 						}
 						return append(new, time.Now(), time.Now()), nil
 					}),
@@ -80,7 +95,20 @@ func BulkCopy(table string, columns []string, reader *io.Reader, batchSize int) 
 				old := batch[i]
 				new := make([]interface{}, len(old))
 				for k, v := range old {
-					new[k] = v
+					if v == "" {
+						new[k] = nil
+					} else if strings.HasPrefix(v, "{") {
+						v = strings.TrimLeft(v, "{")
+						v = strings.TrimRight(v, "}")
+						new[k] = strings.Split(v, ",")
+					} else {
+						new_val, err := time.ParseInLocation(time.RFC3339, v, loc)
+						if err == nil {
+							new[k] = new_val
+						} else {
+							new[k] = v
+						}
+					}
 				}
 				return append(new, time.Now(), time.Now()), nil
 			}),
