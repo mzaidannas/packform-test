@@ -49,4 +49,8 @@ func SetupRoutes(app *fiber.App) {
 	delivery := api.Group("/delivery")
 	delivery.Get("/", middlewares.Protected(), handler.GetAllDeliveries)
 	delivery.Post("/import", middlewares.Protected(), handler.ImportDeliveries)
+
+	// Report
+	report := api.Group("/report")
+	report.Get("/", middlewares.Protected(), handler.GetReport)
 }
