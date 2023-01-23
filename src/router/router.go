@@ -53,4 +53,5 @@ func SetupRoutes(app *fiber.App) {
 	// Report
 	report := api.Group("/report")
 	report.Get("/", middlewares.Protected(), handler.GetReport)
+	report.Get("/refresh", middlewares.Protected(), handler.RefreshReports)
 }

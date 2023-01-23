@@ -18,7 +18,7 @@ type Order struct {
 }
 
 func OrderCsv(row *[]string) []interface{} {
-	loc, _ := time.LoadLocation("Europe/Berlin")
+	loc, _ := time.LoadLocation("Melbourne/Australia")
 	new := make([]interface{}, len(*row))
 	for k, v := range *row {
 		if k == 1 {

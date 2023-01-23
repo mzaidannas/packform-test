@@ -26,6 +26,14 @@ func ConnectDB() {
 
 	fmt.Println("Connection Opened to Database")
 	DB.Exec("CREATE EXTENSION IF NOT EXISTS \"pg_trgm\";")
-	DB.AutoMigrate(&models.Company{}, &models.Customer{}, &models.Delivery{}, &models.Order{}, &models.OrderItem{}, &models.User{})
+	DB.AutoMigrate(
+		&models.Company{},
+		&models.Customer{},
+		&models.Delivery{},
+		&models.Order{},
+		&models.OrderItem{},
+		&models.User{},
+		&models.Report{},
+	)
 	fmt.Println("Database Migrated")
 }
