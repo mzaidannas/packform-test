@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/goccy/go-json"
 )
@@ -115,7 +114,7 @@ func ImportDeliveryItems() {
 }
 
 func GenerateReports() {
-	req, _ := http.NewRequest("GET", base_uri+"/report/refresh?start_date=2020-01-01T00:00:00&end_date="+time.Now().Format(time.UnixDate), nil)
+	req, _ := http.NewRequest("GET", base_uri+"/report/refresh?start_time=2020-01-01T00:00:00.000Z&end_time=2024-01-01T00:00:00.000Z", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 
 	// Send req using http Client
@@ -142,10 +141,10 @@ func main() {
 	json.Unmarshal(response_bytes, &response)
 	token = response.Data
 	fmt.Println(token)
-	ImportCompanies()
-	ImportCustomers()
-	ImportOrders()
-	ImportOrderItems()
-	ImportDeliveryItems()
+	// ImportCompanies()
+	// ImportCustomers()
+	// ImportOrders()
+	// ImportOrderItems()
+	// ImportDeliveryItems()
 	GenerateReports()
 }

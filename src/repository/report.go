@@ -28,6 +28,6 @@ func RefreshReports(start_date time.Time, end_date time.Time, db *gorm.DB) int {
     ORDER BY 4 DESC;
   `
 	var results []map[string]interface{}
-	db.Debug().Raw(sql, start_date, end_date).Scan(results)
+	db.Raw(sql, start_date, end_date).Scan(results)
 	return len(results)
 }
