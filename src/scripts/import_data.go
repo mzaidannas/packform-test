@@ -8,7 +8,10 @@ import (
 	"net/http"
 	"os"
 
+	"packform-test/config"
+
 	"github.com/goccy/go-json"
+	"github.com/joho/godotenv"
 )
 
 var token string
@@ -19,7 +22,8 @@ type Response struct {
 }
 
 func GetToken() []byte {
-	var jsonStr = []byte(`{"identity":"mzaidannas","password":"Mzaidannas007"}`)
+	creds := map[string]interface{}{"identity": config.Config("USERNAME"), "password": config.Config("PASSWORD")}
+	jsonStr, _ := json.Marshal(creds)
 	response, err := http.Post(base_uri+"/auth/login", "application/json", bytes.NewBuffer(jsonStr))
 
 	if err != nil {
@@ -135,6 +139,11 @@ func GenerateReports() {
 }
 
 func main() {
+	// Load .env file
+	if err := godotenv.Load(".env"); err != nil {
+		panic("Error loading .env file")
+	}
+
 	base_uri = "http://localhost:3000/api"
 	var response Response
 	response_bytes := GetToken()
