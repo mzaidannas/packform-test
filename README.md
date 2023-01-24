@@ -24,7 +24,7 @@ Basically we have 3 services
  - Signal Trapping
  - Scheduled workers
  - Go Coroutines/async programming
- - HTTP streaming (Huge json responses)
+ - HTTP streaming (Huge CSV Uploads)
  - GIN(General Inverted Indices) for text searching
  - BRIN (Block Range Indices) for date range quering
  - Hash indices for exact matching

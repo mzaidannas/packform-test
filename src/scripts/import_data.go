@@ -150,10 +150,10 @@ func main() {
 	json.Unmarshal(response_bytes, &response)
 	token = response.Data
 	fmt.Println(token)
-	// ImportCompanies()
-	// ImportCustomers()
-	// ImportOrders()
-	// ImportOrderItems()
-	// ImportDeliveryItems()
+	ImportCompanies()
+	ImportCustomers()
+	ImportOrders()
+	ImportOrderItems()
+	ImportDeliveryItems()
 	GenerateReports()
 }
