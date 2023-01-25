@@ -2,8 +2,8 @@ package handler
 
 import (
 	"packform-test/src/database"
-	"packform-test/src/models"
 	"packform-test/src/repository"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -12,9 +12,12 @@ import (
 // GetReport
 func GetReport(c *fiber.Ctx) error {
 	db := database.DB
-	var reports []models.Report
-	repository.GetDatatable(db, c.Query("search"), c.Query("order")).Scan(&reports)
-	return c.JSON(fiber.Map{"status": "success", "message": "All Reports", "data": reports})
+	limit, _ := strconv.Atoi(c.Query("limit"))
+	reports, cursor, err := repository.GetReports(db, c.Query("search"), c.Query("order"), limit)
+	if err != nil {
+		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't retrieve reports", "data": err})
+	}
+	return c.JSON(fiber.Map{"status": "success", "message": "All Reports", "data": reports, "cursor": cursor})
 }
 
 func RefreshReports(c *fiber.Ctx) error {
