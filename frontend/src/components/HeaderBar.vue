@@ -1,21 +1,20 @@
 <template>
-  <header class="bg-white h-20">
+  <header class="bg-gray-800 h-16">
     <nav class="h-full flex justify-between container items-center">
       <div>
-        <RouterLink to="/" class="text-ct-dark-600 font-semibold">Packform-Test</RouterLink>
+        <RouterLink to="/" class="text-white font-semibold">
+          <img src="/frontend/src/assets/logo.svg" class="h-12" />
+        </RouterLink>
       </div>
       <ul class="flex items-center gap-4">
-        <li><RouterLink to="/" class="text-ct-dark-600">Home</RouterLink></li>
-        <li v-if="!user?.email">
-          <RouterLink to="/register" class="text-ct-dark-600">SignUp</RouterLink>
+        <li v-for="(link, idx) in filteredLinks" :key="idx">
+          <RouterLink :to="link.link"
+            class="text-white rounded-md focus:bg-gray-600 transition duration-150 ease-in-out py-2 pt-1 px-4"
+            :class="link.link == currentLink ? 'bg-gray-900' : ''">{{ link.name }}</RouterLink>
         </li>
-        <li v-if="!user?.email">
-          <RouterLink to="/login" class="text-ct-dark-600">Login</RouterLink>
-        </li>
-        <li v-if="user?.email">
-          <RouterLink to="/profile" class="text-ct-dark-600">Profile</RouterLink>
-        </li>
-        <li v-if="user?.email" class="cursor-pointer" @click="handleLogout">Logout</li>
+        <li v-if="user"
+          class="cursor-pointer text-white rounded-md focus:bg-gray-600 transition duration-150 ease-in-out"
+          @click="handleLogout">Logout</li>
       </ul>
     </nav>
   </header>
@@ -26,6 +25,8 @@ import { logoutUserFn } from '@/api/auth';
 import { useMutation } from 'vue-query';
 import { useAuthStore } from '@/stores/auth.store';
 import { createToast } from 'mosha-vue-toastify';
+import router from '@/router';
+import { computed, reactive, ref } from 'vue';
 
 const authStore = useAuthStore();
 
@@ -34,7 +35,7 @@ const user = authStore.authUser;
 const { mutate: logoutUser } = useMutation(() => logoutUserFn(), {
   onSuccess: () => {
     authStore.setAuthUser(null);
-    document.location.href = '/login';
+    router.push('/login');
   },
   onError: error => {
     if (Array.isArray((error as any).response.data.error)) {
@@ -56,4 +57,20 @@ const { mutate: logoutUser } = useMutation(() => logoutUserFn(), {
 const handleLogout = () => {
   logoutUser();
 };
+
+const links = reactive([
+  { name: 'Home', link: '/' },
+  { name: 'Sign Up', link: '/register' },
+  { name: 'Login', link: '/login' },
+  { name: 'Reports', link: '/reports' }
+]);
+
+const currentLink = ref(router.currentRoute.value.path);
+
+const restrictedLinks = new Set(['Reports']);
+const anonymousLinks = new Set(['Sign Up', 'Login'])
+
+const filteredLinks = computed(() => {
+  return links.filter(link => (user || !restrictedLinks.has(link.name)) && (!user || anonymousLinks.has(link.name)));
+});
 </script>

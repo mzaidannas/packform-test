@@ -9,9 +9,13 @@ export const useAuthStore = defineStore({
   id: 'authStore',
   state: () =>
     ({
-      authUser: JSON.parse(localStorage.getItem('user') || '{}')
+      authUser: JSON.parse(localStorage.getItem('user') || 'null')
     } as AuthStoreState),
-  getters: {},
+  getters: {
+    getAuthUser(): IUser | null {
+      return this.authUser;
+    }
+  },
   actions: {
     setAuthUser(user: IUser | null) {
       this.authUser = user;

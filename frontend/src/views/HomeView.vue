@@ -1,6 +1,5 @@
 <template>
-  <HeaderBar />
-  <section class="bg-ct-blue-600 min-h-screen pt-20">
+  <section class="bg-gray-900 min-h-screen pt-20">
     <div class="max-w-4xl mx-auto bg-ct-dark-200 rounded-md h-[20rem] flex justify-center items-center">
       <p class="text-5xl font-semibold">Home Page</p>
     </div>
