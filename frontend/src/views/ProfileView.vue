@@ -1,5 +1,5 @@
 <template>
-  <Header />
+  <HeaderBar />
   <section class="bg-ct-blue-600 min-h-screen pt-20">
     <div class="max-w-4xl mx-auto bg-ct-dark-100 rounded-md h-[20rem] flex justify-center items-center">
       <div>
@@ -15,7 +15,7 @@
 </template>
 
 <script setup lang="ts">
-import Header from '@/components/Header.vue';
+import HeaderBar from '@/components/HeaderBar.vue';
 import { useAuthStore } from '@/stores/auth.store';
 const authStore = useAuthStore();
 const user = authStore.authUser;

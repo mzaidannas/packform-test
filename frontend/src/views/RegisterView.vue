@@ -21,8 +21,8 @@
           <a href="" class="">Forgot Password?</a>
         </div>
         <LoadingButton :loading="isLoading">Login</LoadingButton>
-        <span class="block">Need an account? <RouterLink to="/register" class="text-ct-blue-600">Sign Up
-            Here</RouterLink></span>
+        <span class="block">Need an account? <RouterLink to="/register" class="text-ct-blue-600">Sign Up Here
+          </RouterLink></span>
       </form>
     </div>
   </section>

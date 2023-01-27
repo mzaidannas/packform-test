@@ -9,7 +9,7 @@ export const useAuthStore = defineStore({
   id: 'authStore',
   state: () =>
     ({
-      authUser: JSON.parse(localStorage.getItem('user') || '')
+      authUser: JSON.parse(localStorage.getItem('user') || '{}')
     } as AuthStoreState),
   getters: {},
   actions: {

@@ -2,20 +2,20 @@
   <header class="bg-white h-20">
     <nav class="h-full flex justify-between container items-center">
       <div>
-        <RouterLink to="/" class="text-ct-dark-600 font-semibold">CodevoWeb</RouterLink>
+        <RouterLink to="/" class="text-ct-dark-600 font-semibold">Packform-Test</RouterLink>
       </div>
       <ul class="flex items-center gap-4">
         <li><RouterLink to="/" class="text-ct-dark-600">Home</RouterLink></li>
-        <li v-if="!user">
+        <li v-if="!user?.email">
           <RouterLink to="/register" class="text-ct-dark-600">SignUp</RouterLink>
         </li>
-        <li v-if="!user">
+        <li v-if="!user?.email">
           <RouterLink to="/login" class="text-ct-dark-600">Login</RouterLink>
         </li>
-        <li v-if="user">
+        <li v-if="user?.email">
           <RouterLink to="/profile" class="text-ct-dark-600">Profile</RouterLink>
         </li>
-        <li v-if="user" class="cursor-pointer" @click="handleLogout">Logout</li>
+        <li v-if="user?.email" class="cursor-pointer" @click="handleLogout">Logout</li>
       </ul>
     </nav>
   </header>
