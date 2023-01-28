@@ -14,6 +14,7 @@ services:
     ports:
       - 3000:3000
     environment:
+      DB_PORT: ${DB_PORTL-5432}
       DB_HOST: ${DB_HOST:-postgres}
       DB_USER: ${DB_USER:-postgres}
       DB_PASSWORD: ${DB_PASSWORD:-password}
@@ -22,7 +23,8 @@ services:
       USERNAME: ${USERNAME}
       PASSWORD: ${PASSWORD}
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
 
   postgres:
     image: postgres:alpine
@@ -34,3 +36,8 @@ services:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5

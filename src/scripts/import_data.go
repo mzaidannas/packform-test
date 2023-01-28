@@ -141,7 +141,7 @@ func GenerateReports() {
 func main() {
 	// Load .env file
 	if err := godotenv.Load(".env"); err != nil {
-		panic("Error loading .env file")
+		fmt.Println("Error loading .env file")
 	}
 
 	base_uri = "http://localhost:3000/api"

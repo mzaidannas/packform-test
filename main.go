@@ -13,9 +13,9 @@ import (
 )
 
 func main() {
-	// Load .env file
+	// Load .env file if running locally
 	if err := godotenv.Load(".env"); err != nil {
-		panic("Error loading .env file")
+		log.Println("Error loading .env file")
 	}
 
 	// Enable DB and create migrations before forking to multiple threads
