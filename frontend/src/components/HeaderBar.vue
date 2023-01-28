@@ -21,9 +21,9 @@
 </template>
 
 <script setup lang="ts">
+import { useAuthStore } from '@/stores/auth.store';
 import { logoutUserFn } from '@/api/auth';
 import { useMutation } from 'vue-query';
-import { useAuthStore } from '@/stores/auth.store';
 import { createToast } from 'mosha-vue-toastify';
 import router from '@/router';
 import { computed, reactive, ref } from 'vue';
@@ -68,9 +68,9 @@ const links = reactive([
 const currentLink = ref(router.currentRoute.value.path);
 
 const restrictedLinks = new Set(['Reports']);
-const anonymousLinks = new Set(['Sign Up', 'Login'])
+const anonymousLinks = new Set(['Sign Up', 'Login']);
 
 const filteredLinks = computed(() => {
-  return links.filter(link => (user || !restrictedLinks.has(link.name)) && (!user || anonymousLinks.has(link.name)));
+  return links.filter(link => (user && restrictedLinks.has(link.name)) || (!user && anonymousLinks.has(link.name)));
 });
 </script>

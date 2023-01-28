@@ -11,7 +11,7 @@ export const useAuthStore = defineStore({
   state: () =>
     ({
       authUser: JSON.parse(localStorage.getItem('user') || 'null'),
-      authToken: null
+      authToken: JSON.parse(localStorage.getItem('user_token') || 'null')
     } as AuthStoreState),
   getters: {
     getAuthUser(): IUser | null {
@@ -29,6 +29,7 @@ export const useAuthStore = defineStore({
     },
     setAuthToken(token: string | null) {
       this.authToken = token;
+      localStorage.setItem('user_token', JSON.stringify(this.authToken));
     }
   }
 });
