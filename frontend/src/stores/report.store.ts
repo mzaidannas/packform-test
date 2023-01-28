@@ -27,11 +27,11 @@ export const useReportStore = defineStore({
     }
   },
   actions: {
-    async fetchReports(search: string, start_date: Date, end_date: Date, orderCol: string, order: string, limit: Number) {
+    async fetchReports(search: string, start_date: Date, end_date: Date, orderCol: string, order: string, page: Number, limit: Number) {
       this.reports = [];
       this.loading = true;
       try {
-        const response = await getReports(search, start_date, end_date, orderCol, order, limit);
+        const response = await getReports(search, start_date, end_date, orderCol, order, page, limit);
         this.reports = response.data;
         this.total = response.total;
       } finally {

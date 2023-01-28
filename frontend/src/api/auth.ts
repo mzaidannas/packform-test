@@ -47,7 +47,7 @@ export const getMeFn = async () => {
   return response.data;
 };
 
-export const getReports = async (search: string, start_date: Date, end_date: Date, orderCol: string, order: string, limit: Number) => {
+export const getReports = async (search: string, start_date: Date, end_date: Date, orderCol: string, order: string, page: Number, limit: Number) => {
   const response = await authApi.get<IReportResponse>('report', {
     params: {
       search: search,
@@ -55,6 +55,7 @@ export const getReports = async (search: string, start_date: Date, end_date: Dat
       end_date: end_date,
       order_col: orderCol,
       order: order,
+      page: page,
       limit: limit
     }
   });

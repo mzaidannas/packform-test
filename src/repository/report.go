@@ -4,12 +4,10 @@ import (
 	"packform-test/src/models"
 	"time"
 
-	"github.com/pilagod/gorm-cursor-paginator/v2/paginator"
-
 	"gorm.io/gorm"
 )
 
-func GetReports(relation *gorm.DB, search string, start_date time.Time, end_date time.Time, orderCol string, orderDir string, limit int) ([]models.Report, int64, paginator.Cursor, error) {
+func GetReports(relation *gorm.DB, search string, start_date time.Time, end_date time.Time, orderCol string, orderDir string, page int, limit int) ([]models.Report, int64, error) {
 	if search != "" {
 		relation = relation.Where("(order_name || ' ' || customer_name || ' ' || customer_company) ILIKE ?", "%"+search+"%")
 	}
@@ -23,14 +21,14 @@ func GetReports(relation *gorm.DB, search string, start_date time.Time, end_date
 	}
 	var total int64
 	relation = relation.Model(&models.Report{}).Count(&total)
-	reports, cursor, err := GetDatatable[models.Report](relation, &search, &orderCol, &orderDir, &limit)
+	reports, err := GetDatatable[models.Report](relation, &search, &orderCol, &orderDir, &page, &limit)
 
 	// this is paginator error, e.g., invalid cursor
 	if err != nil {
-		return nil, 0, paginator.Cursor{}, err
+		return nil, 0, err
 	}
 
-	return reports, total, cursor, nil
+	return reports, total, nil
 }
 
 func RefreshReports(start_date time.Time, end_date time.Time, db *gorm.DB) int {

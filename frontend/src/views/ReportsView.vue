@@ -109,8 +109,9 @@ const onClickHandler = async (page: number) => {
     tableConfig.search,
     tableConfig.start_date,
     tableConfig.end_date,
-    snakeToPascal(tableConfig.sortedColumn),
+    tableConfig.sortedColumn,
     tableConfig.sortOrder,
+    tableConfig.currentPage,
     tableConfig.limit
   );
 };
@@ -151,14 +152,7 @@ async function sort(column: string) {
 
 onMounted(async () => {
   date.value = [tableConfig.start_date, tableConfig.end_date];
-  await fetchReports(
-    tableConfig.search,
-    tableConfig.start_date,
-    tableConfig.end_date,
-    snakeToPascal(tableConfig.sortedColumn),
-    tableConfig.sortOrder,
-    tableConfig.limit
-  );
+  onClickHandler(1);
 });
 
 const totalAmount = computed(() => {

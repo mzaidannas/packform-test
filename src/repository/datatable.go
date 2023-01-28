@@ -30,7 +30,7 @@ func CreatePaginator(
 	return p
 }
 
-func GetDatatable[GeneralModel any](db *gorm.DB, search *string, orderCol *string, orderDir *string, limit *int) ([]GeneralModel, paginator.Cursor, error) {
+func GetCursorDatatable[GeneralModel any](db *gorm.DB, search *string, orderCol *string, orderDir *string, limit *int) ([]GeneralModel, paginator.Cursor, error) {
 
 	var objects []GeneralModel
 
@@ -63,5 +63,40 @@ func GetDatatable[GeneralModel any](db *gorm.DB, search *string, orderCol *strin
 	}
 
 	return objects, cursor, nil
+
+}
+
+func GetDatatable[GeneralModel any](db *gorm.DB, search *string, orderCol *string, orderDir *string, page *int, limit *int) ([]GeneralModel, error) {
+
+	var objects []GeneralModel
+
+	if *limit == 0 {
+		*limit = 100
+	}
+	if *orderCol == "" {
+		*orderCol = "ID"
+	}
+	if *orderDir == "" {
+		*orderDir = "DESC"
+	}
+	if *page == 0 {
+		*page = 1
+	}
+
+	offet := ((*page - 1) * *limit)
+
+	db = db.Order(*orderCol + " " + *orderDir)
+
+	// find objects with pagination
+	db = db.Offset(offet)
+	db = db.Limit(*limit)
+
+	result := db.Find(&objects)
+	// this is gorm error
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return objects, nil
 
 }
