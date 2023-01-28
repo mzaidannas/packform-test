@@ -6,20 +6,14 @@ import (
 	"packform-test/config"
 	"packform-test/src/database"
 	"packform-test/src/models"
+	"packform-test/src/services"
 	"time"
 
 	"gorm.io/gorm"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
-	"golang.org/x/crypto/bcrypt"
 )
-
-// CheckPasswordHash compare password with hash
-func CheckPasswordHash(password, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
-}
 
 func getUserByEmail(e string) (*models.User, error) {
 	db := database.DB
@@ -53,7 +47,7 @@ func valid(email string) bool {
 // Login get user and password
 func Login(c *fiber.Ctx) error {
 	type LoginInput struct {
-		Identity string `json:"identity"`
+		Identity string `json:"username"`
 		Password string `json:"password"`
 	}
 	type UserData struct {
@@ -107,7 +101,7 @@ func Login(c *fiber.Ctx) error {
 		}
 	}
 
-	if !CheckPasswordHash(pass, ud.Password) {
+	if !services.CheckPasswordHash(pass, ud.Password) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"status": "error", "message": "Invalid password", "data": nil})
 	}
 
@@ -115,7 +109,6 @@ func Login(c *fiber.Ctx) error {
 
 	claims := token.Claims.(jwt.MapClaims)
 	claims["username"] = ud.Username
-	claims["user_id"] = ud.ID
 	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 
 	t, err := token.SignedString([]byte(config.Config("SECRET")))
@@ -123,7 +116,7 @@ func Login(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusInternalServerError)
 	}
 
-	return c.JSON(fiber.Map{"status": "success", "message": "Success login", "data": t})
+	return c.JSON(fiber.Map{"status": "success", "message": "Success login", "access_token": t})
 }
 
 // Register new user
@@ -140,7 +133,7 @@ func Register(c *fiber.Ctx) error {
 
 	}
 
-	hash, err := hashPassword(user.Password)
+	hash, err := services.HashPassword(user.Password)
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't hash password", "data": err})
 
@@ -157,4 +150,13 @@ func Register(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{"status": "success", "message": "Created user", "data": newUser})
+}
+
+func Logout(c *fiber.Ctx) error {
+	token := c.Locals("user").(*jwt.Token)
+	status := services.ExpireToken(token)
+	if status != true {
+		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't logout", "data": nil})
+	}
+	return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Successfully logged out", "data": nil})
 }

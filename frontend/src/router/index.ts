@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, type NavigationGuardNext, type RouteLocationNormalized } from 'vue-router';
 import HomeView from '@/views/HomeView.vue';
 import { useAuthStore } from '@/stores/auth.store';
+import requireAuth from '@/router/middleware/requireAuth';
 import middlewarePipeline from './middlewarePipeline';
 
 const routes = [
@@ -20,9 +21,12 @@ const routes = [
     component: () => import('@/views/LoginView.vue')
   },
   {
-    name: 'profile',
-    path: '/profile',
-    component: () => import('@/views/ProfileView.vue')
+    name: 'reports',
+    path: '/reports',
+    component: () => import('@/views/ReportsView.vue'),
+    meta: {
+      middleware: [requireAuth]
+    }
   }
 ];
 

@@ -1,29 +1,35 @@
 <template>
-  <section class="bg-ct-blue-600 min-h-screen grid place-items-center">
-    <div>
-      <h1 class="text-4xl xl:text-6xl text-center font-[600] text-ct-yellow-600 mb-4">Welcome Back</h1>
-      <h2 class="text-lg text-center mb-4 text-ct-dark-200">Login to have access</h2>
-      <form @submit="onSubmit"
-        class="max-w-[27rem] mx-auto overflow-hidden shadow-lg bg-ct-dark-200 rounded-2xl p-8 space-y-5">
-        <div class="">
-          <label for="email" class="block text-ct-blue-600 mb-3">Email Address</label>
-          <input type="email" placeholder=" " v-model="email"
-            class="block w-full rounded-2xl appearance-none focus:outline-none py-2 px-4" id="email" />
-          <span class="text-red-500 text-xs pt-1 block">{{ errors.email }}</span>
+  <section>
+    <div class="container mx-auto my-10">
+      <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full space-y-8">
+          <div>
+            <img src="/frontend/src/assets/logo.svg" class="mx-auto h-12 w-auto" />
+          </div>
+          <div class="mt-8 space-y-6 text-white">
+            <form @submit="onSubmit">
+              <div class="rounded-md shadow-sm">
+                <input type="text" placeholder="Username" autofocus="true" autocomplete="username" v-model="username"
+                  class="block w-full rounded-2xl appearance-none focus:outline-none py-2 px-4" id="username" />
+                <span class="text-red-500 text-xs pt-1 block">{{ errors.username }}</span>
+              </div>
+              <div class="rounded-md shadow-sm">
+                <input v-model="password" type="password" autocomplete="current-password" placeholder="Password"
+                  class="block w-full rounded-2xl appearance-none focus:outline-none py-2 px-4" id="password" />
+                <span class="text-red-500 text-xs pt-1 block">{{ errors.password }}</span>
+              </div>
+              <div class="mt-8">
+                <LoadingButton :loading="isLoading">
+                  <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+                    <IconLock />
+                  </span>
+                  Sign In
+                </LoadingButton>
+              </div>
+            </form>
+          </div>
         </div>
-        <div class="">
-          <label for="password" class="block text-ct-blue-600 mb-3">Password</label>
-          <input v-model="password" type="password" placeholder=" "
-            class="block w-full rounded-2xl appearance-none focus:outline-none py-2 px-4" id="password" />
-          <span class="text-red-500 text-xs pt-1 block">{{ errors.password }}</span>
-        </div>
-        <div class="text-right">
-          <a href="" class="">Forgot Password?</a>
-        </div>
-        <LoadingButton :loading="isLoading">Login</LoadingButton>
-        <span class="block">Need an account? <router-link :to="{ name: 'register' }" class="text-ct-blue-600">Sign Up
-            Here</router-link></span>
-      </form>
+      </div>
     </div>
   </section>
 </template>
@@ -32,7 +38,7 @@
 import { onBeforeUpdate } from 'vue';
 import { Form, useField, useForm } from 'vee-validate';
 import { toFormValidator } from '@vee-validate/zod';
-import * as zod from 'zod';
+import { z } from 'zod';
 import { useMutation, useQuery, useQueryClient } from 'vue-query';
 import { getMeFn, loginUserFn } from '@/api/auth';
 import type { ILoginInput } from '@/api/types';
@@ -40,13 +46,14 @@ import { createToast } from 'mosha-vue-toastify';
 import router from '@/router';
 import { useAuthStore } from '@/stores/auth.store';
 import LoadingButton from '@/components/buttons/LoadingButton.vue';
+import IconLock from '@/components/icons/IconLock.vue';
 
 const authStore = useAuthStore();
 
 const loginSchema = toFormValidator(
-  zod.object({
-    email: zod.string().min(1, 'Email address is required').email('Email Address is invalid'),
-    password: zod
+  z.object({
+    username: z.string().min(1, 'Username is required').max(50, 'Username should be less than 50 characters'),
+    password: z
       .string()
       .min(1, 'Password is required')
       .min(8, 'Password must be more than 8 characters')
@@ -58,7 +65,7 @@ const { handleSubmit, errors, resetForm } = useForm({
   validationSchema: loginSchema
 });
 
-const { value: email } = useField('email');
+const { value: username } = useField('username');
 const { value: password } = useField('password');
 
 const authResult = useQuery('authUser', () => getMeFn(), {
@@ -85,17 +92,18 @@ const { isLoading, mutate } = useMutation((credentials: ILoginInput) => loginUse
     }
   },
   onSuccess: data => {
+    authStore.setAuthToken(data.access_token);
     queryClient.refetchQueries('authUser');
     createToast('Successfully logged in', {
       position: 'top-right'
     });
-    router.push({ name: 'profile' });
+    router.push({ name: 'reports' });
   }
 });
 
 const onSubmit = handleSubmit(values => {
   mutate({
-    email: values.email,
+    username: values.username,
     password: values.password
   });
   resetForm();
@@ -103,7 +111,7 @@ const onSubmit = handleSubmit(values => {
 
 onBeforeUpdate(() => {
   if (authResult.isSuccess.value) {
-    const authUser = Object.assign({}, authResult.data.value?.data.user);
+    const authUser = Object.assign({}, authResult.data.value?.data);
     authStore.setAuthUser(authUser);
   }
 });

@@ -1,9 +1,7 @@
 export interface IUser {
+  username: string;
   name: string;
   email: string;
-  id: string;
-  created_at: string;
-  updated_at: string;
 }
 
 export interface GenericResponse {
@@ -12,19 +10,20 @@ export interface GenericResponse {
 }
 
 export interface ILoginInput {
-  email: string;
+  username: string;
   password: string;
 }
 
 export interface ISignUpInput {
-  name: string;
+  username: string;
   email: string;
   password: string;
-  passwordConfirm: string;
+  name: string;
 }
 
 export interface ILoginResponse {
   status: string;
+  message: string;
   access_token: string;
 }
 
@@ -35,7 +34,5 @@ export interface ISignUpResponse {
 
 export interface IUserResponse {
   status: string;
-  data: {
-    user: IUser;
-  };
+  data: IUser;
 }

@@ -3,17 +3,22 @@ import { defineStore } from 'pinia';
 
 export type AuthStoreState = {
   authUser: IUser | null;
+  authToken: string | null;
 };
 
 export const useAuthStore = defineStore({
   id: 'authStore',
   state: () =>
     ({
-      authUser: JSON.parse(localStorage.getItem('user') || 'null')
+      authUser: JSON.parse(localStorage.getItem('user') || 'null'),
+      authToken: null
     } as AuthStoreState),
   getters: {
     getAuthUser(): IUser | null {
       return this.authUser;
+    },
+    getAuthToken(): string | null {
+      return this.authToken;
     }
   },
   actions: {
@@ -21,6 +26,9 @@ export const useAuthStore = defineStore({
       this.authUser = user;
       // store user details and jwt in local storage to keep user logged in between page refreshes
       localStorage.setItem('user', JSON.stringify(this.authUser));
+    },
+    setAuthToken(token: string | null) {
+      this.authToken = token;
     }
   }
 });

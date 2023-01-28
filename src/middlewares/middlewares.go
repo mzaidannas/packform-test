@@ -10,7 +10,8 @@ import (
 func SetupMiddlewares(app *fiber.App) {
 	// Disallow request from anywhere but packform-test
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://locahost:4000, https://packform-test.mzaidannas.me",
+		AllowOrigins:     "http://localhost:5173, https://packform-test.mzaidannas.me",
+		AllowCredentials: true,
 	}))
 	// Enable caching of GET routes
 	app.Use(cache.New(cache.Config{

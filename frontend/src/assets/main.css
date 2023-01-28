@@ -2,4 +2,60 @@
 
 @tailwind base;
 @tailwind components;
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="select"],
+input[type="number"] {
+  @apply bg-gray-800 border-0 px-4 py-2 block rounded outline-none font-semibold;
+}
+
+.badge {
+  @apply px-2 py-1 rounded-full text-xs text-white font-semibold;
+}
+
+.badge-green {
+  @apply bg-green-600;
+}
+
+.badge-red {
+  @apply bg-red-600;
+}
+
+.text-btn {
+  @apply font-semibold cursor-pointer outline-none;
+}
+
+.text-btn:focus {
+  @apply outline-none;
+}
+
+.text-btn:hover {
+  @apply underline;
+}
+.text-btn-blue {
+  @apply text-blue-600;
+}
+
+.text-btn-red {
+  @apply text-red-600;
+}
+
+.dg-backdrop {
+  display: none;
+}
+
+.dg-container {
+  display: none !important;
+}
+
+.dg-main-content {
+  display: none;
+}
+
+.custom-dialog {
+  top: 50% !important;
+}
+
 @tailwind utilities;
