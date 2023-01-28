@@ -155,8 +155,8 @@ func Register(c *fiber.Ctx) error {
 func Logout(c *fiber.Ctx) error {
 	token := c.Locals("user").(*jwt.Token)
 	status := services.ExpireToken(token)
-	if status != true {
+	if !status {
 		return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Couldn't logout", "data": nil})
 	}
-	return c.Status(500).JSON(fiber.Map{"status": "error", "message": "Successfully logged out", "data": nil})
+	return c.Status(200).JSON(fiber.Map{"status": "error", "message": "Successfully logged out", "data": nil})
 }

@@ -12,7 +12,7 @@
             class="text-white rounded-md focus:bg-gray-600 transition duration-150 ease-in-out py-2 pt-1 px-4"
             :class="link.link == currentLink ? 'bg-gray-900' : ''">{{ link.name }}</RouterLink>
         </li>
-        <li v-if="user"
+        <li v-if="getAuthUser"
           class="cursor-pointer text-white rounded-md focus:bg-gray-600 transition duration-150 ease-in-out"
           @click="handleLogout">Logout</li>
       </ul>
@@ -27,14 +27,16 @@ import { useMutation } from 'vue-query';
 import { createToast } from 'mosha-vue-toastify';
 import router from '@/router';
 import { computed, reactive, ref } from 'vue';
+import { storeToRefs } from 'pinia';
 
 const authStore = useAuthStore();
 
-const user = authStore.authUser;
+const { getAuthUser } = storeToRefs(authStore);
 
 const { mutate: logoutUser } = useMutation(() => logoutUserFn(), {
   onSuccess: () => {
     authStore.setAuthUser(null);
+    authStore.setAuthToken(null);
     router.push('/login');
   },
   onError: error => {
@@ -71,6 +73,6 @@ const restrictedLinks = new Set(['Reports']);
 const anonymousLinks = new Set(['Sign Up', 'Login']);
 
 const filteredLinks = computed(() => {
-  return links.filter(link => (user && restrictedLinks.has(link.name)) || (!user && anonymousLinks.has(link.name)));
+  return links.filter(link => (getAuthUser.value && restrictedLinks.has(link.name)) || (!getAuthUser.value && anonymousLinks.has(link.name)));
 });
 </script>

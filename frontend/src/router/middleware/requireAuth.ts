@@ -5,7 +5,6 @@ import router from '..';
 export default async function requireAuth({ next, authStore }: { next: NavigationGuardNext; authStore: any }) {
   try {
     const response = await getMeFn();
-    debugger;
     const user = response.data;
     authStore.setAuthUser(user);
 
