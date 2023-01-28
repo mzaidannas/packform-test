@@ -28,6 +28,7 @@ func main() {
 	})
 
 	middlewares.SetupMiddlewares(app)
+	middlewares.SetupStatic(app)
 
 	router.SetupRoutes(app)
 

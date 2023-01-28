@@ -3,7 +3,7 @@
     <div class="container mx-auto">
       <div class="flex flex-row pt-8">
         <input type="text" v-model="search" placeholder="Search order, customer or company name" label="Search"
-          class="w-full" />
+          class="w-full text-white" />
       </div>
       <div class="flex flex-row pt-8">
         <Datepicker v-model="date" range multi-calendars :dark="true" />
@@ -160,7 +160,7 @@ const totalAmount = computed(() => {
 });
 
 const totalPages = computed(() => {
-  return total.value.valueOf() / tableConfig.limit;
+  return Math.ceil(total.value.valueOf() / tableConfig.limit);
 });
 
 const search = ref(tableConfig.search);
