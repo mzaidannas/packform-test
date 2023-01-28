@@ -10,6 +10,6 @@ func SetupStatic(app *fiber.App) {
 	app.Static("/assets", "dist/assets")
 
 	app.Get("/", func(ctx *fiber.Ctx) error {
-		return ctx.SendFile("./dist/index.html")
+		return ctx.SendFile("dist/index.html")
 	})
 }

@@ -38,7 +38,10 @@ FROM scratch AS prod
 WORKDIR /production
 
 # Copy our compiled executable from the last stage.
-COPY --from=api /compiler/packform-test /compiler/import-data /compiler/dist ./
+COPY --from=api /compiler/packform-test /compiler/import-data ./
+
+# Copy frontend built assets
+COPY --from=api /compiler/dist/ ./dist/
 
 # Run application and expose port 8080.
 EXPOSE 3000
