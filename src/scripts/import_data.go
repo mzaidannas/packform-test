@@ -93,27 +93,27 @@ func uploadLargeFile(uri string, filePath string, chunkSize int, params map[stri
 }
 
 func ImportCompanies() {
-	res := string(uploadLargeFile("/company/import", "/home/zaid/Desktop/test_data/Test task - Postgres - customer_companies.csv", 50000, nil))
+	res := string(uploadLargeFile("/company/import", "/production/import_csv/Test task - Postgres - customer_companies.csv", 50000, nil))
 	println(res)
 }
 
 func ImportCustomers() {
-	res := string(uploadLargeFile("/customer/import", "/home/zaid/Desktop/test_data/Test task - Postgres - customers.csv", 50000, nil))
+	res := string(uploadLargeFile("/customer/import", "/production/import_csv/Test task - Postgres - customers.csv", 50000, nil))
 	println(res)
 }
 
 func ImportOrders() {
-	res := string(uploadLargeFile("/order/import", "/home/zaid/Desktop/test_data/Test task - Postgres - orders.csv", 50000, nil))
+	res := string(uploadLargeFile("/order/import", "/production/import_csv/Test task - Postgres - orders.csv", 50000, nil))
 	println(res)
 }
 
 func ImportOrderItems() {
-	res := string(uploadLargeFile("/order-item/import", "/home/zaid/Desktop/test_data/Test task - Postgres - order_items.csv", 50000, nil))
+	res := string(uploadLargeFile("/order-item/import", "/production/import_csv/Test task - Postgres - order_items.csv", 50000, nil))
 	println(res)
 }
 
 func ImportDeliveryItems() {
-	res := string(uploadLargeFile("/delivery/import", "/home/zaid/Desktop/test_data/Test task - Postgres - deliveries.csv", 50000, nil))
+	res := string(uploadLargeFile("/delivery/import", "/production/import_csv/Test task - Postgres - deliveries.csv", 50000, nil))
 	println(res)
 }
 

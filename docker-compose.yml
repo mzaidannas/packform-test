@@ -22,6 +22,8 @@ services:
       SECRET: 7B4XAV8XOZ9BT52O
       USERNAME: ${USERNAME}
       PASSWORD: ${PASSWORD}
+    volumes:
+      - ./import_csv:/production/import_csv
     depends_on:
       postgres:
         condition: service_healthy
