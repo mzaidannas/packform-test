@@ -18,11 +18,11 @@ var token string
 var base_uri string
 
 type Response struct {
-	Data string
+	AccessToken string `json:"access_token"`
 }
 
 func GetToken() []byte {
-	creds := map[string]interface{}{"identity": config.Config("USERNAME"), "password": config.Config("PASSWORD")}
+	creds := map[string]interface{}{"username": config.Config("USERNAME"), "password": config.Config("PASSWORD")}
 	jsonStr, _ := json.Marshal(creds)
 	response, err := http.Post(base_uri+"/auth/login", "application/json", bytes.NewBuffer(jsonStr))
 
@@ -148,7 +148,7 @@ func main() {
 	var response Response
 	response_bytes := GetToken()
 	json.Unmarshal(response_bytes, &response)
-	token = response.Data
+	token = response.AccessToken
 	fmt.Println(token)
 	ImportCompanies()
 	ImportCustomers()
