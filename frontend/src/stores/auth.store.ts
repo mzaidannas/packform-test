@@ -22,12 +22,12 @@ export const useAuthStore = defineStore({
     }
   },
   actions: {
-    setAuthUser(user: IUser | null) {
+    async setAuthUser(user: IUser | null) {
       this.authUser = user;
       // store user details and jwt in local storage to keep user logged in between page refreshes
       localStorage.setItem('user', JSON.stringify(this.authUser));
     },
-    setAuthToken(token: string | null) {
+    async setAuthToken(token: string | null) {
       this.authToken = token;
       localStorage.setItem('user_token', this.authToken || '');
     }

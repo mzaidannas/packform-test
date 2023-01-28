@@ -34,9 +34,9 @@ const authStore = useAuthStore();
 const { getAuthUser } = storeToRefs(authStore);
 
 const { mutate: logoutUser } = useMutation(() => logoutUserFn(), {
-  onSuccess: () => {
-    authStore.setAuthUser(null);
-    authStore.setAuthToken(null);
+  onSuccess: async () => {
+    await authStore.setAuthUser(null);
+    await authStore.setAuthToken(null);
     router.push('/login');
   },
   onError: error => {

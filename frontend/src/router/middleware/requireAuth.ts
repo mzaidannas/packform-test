@@ -6,7 +6,7 @@ export default async function requireAuth({ next, authStore }: { next: Navigatio
   try {
     const response = await getMeFn();
     const user = response.data;
-    authStore.setAuthUser(user);
+    await authStore.setAuthUser(user);
 
     if (!user) {
       return next({

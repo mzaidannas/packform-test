@@ -1,6 +1,6 @@
 <template>
   <section>
-    <div class="container mx-auto my-10">
+    <div class="container mx-auto">
       <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8">
           <div>
@@ -41,7 +41,7 @@ import { toFormValidator } from '@vee-validate/zod';
 import { z } from 'zod';
 import { useMutation, useQuery, useQueryClient } from 'vue-query';
 import { getMeFn, loginUserFn } from '@/api/auth';
-import type { ILoginInput } from '@/api/types';
+import type { ILoginInput, ILoginResponse, IUserResponse } from '@/api/types';
 import { createToast } from 'mosha-vue-toastify';
 import router from '@/router';
 import { useAuthStore } from '@/stores/auth.store';
@@ -70,7 +70,25 @@ const { value: password } = useField('password');
 
 const authResult = useQuery('authUser', () => getMeFn(), {
   enabled: false,
-  retry: 1
+  retry: 1,
+  onError: error => {
+    if (Array.isArray((error as any).response.data.error)) {
+      (error as any).response.data.error.forEach((el: any) =>
+        createToast(el.message, {
+          position: 'top-right',
+          type: 'warning'
+        })
+      );
+    } else {
+      createToast((error as any).response.data.message, {
+        position: 'top-right',
+        type: 'danger'
+      });
+    }
+  },
+  onSuccess: async (response: IUserResponse) => {
+    await authStore.setAuthUser(response.data);
+  }
 });
 
 const queryClient = useQueryClient();
@@ -91,13 +109,13 @@ const { isLoading, mutate } = useMutation((credentials: ILoginInput) => loginUse
       });
     }
   },
-  onSuccess: data => {
-    authStore.setAuthToken(data.access_token);
-    queryClient.refetchQueries('authUser');
+  onSuccess: async data => {
     createToast('Successfully logged in', {
       position: 'top-right'
     });
-    router.push({ name: 'reports' });
+    await authStore.setAuthToken(data.access_token);
+    await queryClient.refetchQueries('authUser');
+    await router.push({ name: 'reports' });
   }
 });
 
@@ -109,10 +127,10 @@ const onSubmit = handleSubmit(values => {
   resetForm();
 });
 
-onBeforeUpdate(() => {
+onBeforeUpdate(async () => {
   if (authResult.isSuccess.value) {
     const authUser = Object.assign({}, authResult.data.value?.data);
-    authStore.setAuthUser(authUser);
+    await authStore.setAuthUser(authUser);
   }
 });
 </script>
