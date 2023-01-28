@@ -42,3 +42,7 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+
+# Build files
+main
+import_data

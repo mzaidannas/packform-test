@@ -1,0 +1,36 @@
+version: "3.9"
+
+volumes:
+  postgres_data: {}
+
+services:
+  packform-test:
+    restart: always
+    image: packform-test
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: prod
+    ports:
+      - 3000:3000
+    environment:
+      DB_HOST: ${DB_HOST:-postgres}
+      DB_USER: ${DB_USER:-postgres}
+      DB_PASSWORD: ${DB_PASSWORD:-password}
+      DB_NAME: ${DB_NAME:-packform}
+      SECRET: 7B4XAV8XOZ9BT52O
+      USERNAME: ${USERNAME}
+      PASSWORD: ${PASSWORD}
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: ${DB_NAME:-packform}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
