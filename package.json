@@ -15,11 +15,13 @@
   },
   "dependencies": {
     "@vee-validate/zod": "^4.7.3",
+    "@vuepic/vue-datepicker": "^3.6.5",
     "axios": "^1.2.4",
     "mosha-vue-toastify": "^1.0.23",
     "pinia": "^2.0.28",
     "vee-validate": "^4.7.3",
     "vue": "^3.2.45",
+    "vue-awesome-paginate": "^1.1.46",
     "vue-query": "^1.26.0",
     "vue-router": "^4.1.6",
     "zod": "^3.20.2"

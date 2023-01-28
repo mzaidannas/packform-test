@@ -1,3 +1,5 @@
+import type { IReport } from "@/models/report";
+
 export interface IUser {
   username: string;
   name: string;
@@ -35,4 +37,10 @@ export interface ISignUpResponse {
 export interface IUserResponse {
   status: string;
   data: IUser;
+}
+
+export interface IReportResponse {
+  status: string;
+  data: IReport[];
+  total: Number;
 }

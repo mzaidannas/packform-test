@@ -9,18 +9,28 @@ import (
 	"gorm.io/gorm"
 )
 
-func GetReports(relation *gorm.DB, search string, order string, limit int) ([]models.Report, paginator.Cursor, error) {
+func GetReports(relation *gorm.DB, search string, start_date time.Time, end_date time.Time, orderCol string, orderDir string, limit int) ([]models.Report, int64, paginator.Cursor, error) {
 	if search != "" {
 		relation = relation.Where("(order_name || ' ' || customer_name || ' ' || customer_company) ILIKE ?", "%"+search+"%")
 	}
-	reports, cursor, err := GetDatatable[models.Report](relation, &search, &order, &limit)
+	if !start_date.After(time.Now()) {
+		relation = relation.Where("order_date >= ?", start_date)
+	}
+	if !end_date.Before(start_date) {
+		relation = relation.Where("order_date <= ?", end_date)
+	} else {
+		relation = relation.Where("order_date <= CURRENT_TIMESTAMP")
+	}
+	var total int64
+	relation = relation.Model(&models.Report{}).Count(&total)
+	reports, cursor, err := GetDatatable[models.Report](relation, &search, &orderCol, &orderDir, &limit)
 
 	// this is paginator error, e.g., invalid cursor
 	if err != nil {
-		return nil, paginator.Cursor{}, err
+		return nil, 0, paginator.Cursor{}, err
 	}
 
-	return reports, cursor, nil
+	return reports, total, cursor, nil
 }
 
 func RefreshReports(start_date time.Time, end_date time.Time, db *gorm.DB) int {

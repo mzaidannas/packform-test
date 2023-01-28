@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { GenericResponse, ILoginInput, ILoginResponse, IUserResponse, ISignUpInput } from '@/api/types';
+import type { GenericResponse, ILoginInput, ILoginResponse, IUserResponse, ISignUpInput, IReportResponse } from '@/api/types';
 
 const BASE_URL = `http://${import.meta.env.VITE_BASE_HOST}/api/`;
 const UNAUTHORIZED_CODES = [400, 401];
@@ -44,5 +44,19 @@ export const logoutUserFn = async () => {
 
 export const getMeFn = async () => {
   const response = await authApi.get<IUserResponse>('user');
+  return response.data;
+};
+
+export const getReports = async (search: string, start_date: Date, end_date: Date, orderCol: string, order: string, limit: Number) => {
+  const response = await authApi.get<IReportResponse>('report', {
+    params: {
+      search: search,
+      start_date: start_date,
+      end_date: end_date,
+      order_col: orderCol,
+      order: order,
+      limit: limit
+    }
+  });
   return response.data;
 };

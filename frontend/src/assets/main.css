@@ -11,6 +11,10 @@ input[type="number"] {
   @apply bg-gray-800 border-0 px-4 py-2 block rounded outline-none font-semibold;
 }
 
+select {
+  @apply bg-gray-800 border-0 px-4 py-2 block rounded outline-none font-semibold;
+}
+
 .badge {
   @apply px-2 py-1 rounded-full text-xs text-white font-semibold;
 }

@@ -6,11 +6,15 @@ import (
 )
 
 func CreatePaginator(
+	key *string,
 	cursor paginator.Cursor,
 	order *paginator.Order,
 	limit *int,
 ) *paginator.Paginator {
 	p := paginator.New()
+	if key != nil {
+		p.SetKeys(*key)
+	}
 	if order != nil {
 		p.SetOrder(*order)
 	}
@@ -26,21 +30,24 @@ func CreatePaginator(
 	return p
 }
 
-func GetDatatable[GeneralModel any](db *gorm.DB, search *string, order *string, limit *int) ([]GeneralModel, paginator.Cursor, error) {
+func GetDatatable[GeneralModel any](db *gorm.DB, search *string, orderCol *string, orderDir *string, limit *int) ([]GeneralModel, paginator.Cursor, error) {
 
 	var objects []GeneralModel
 
 	if *limit == 0 {
-		*limit = 10
+		*limit = 100
 	}
-	if *order == "" {
-		*order = "DESC"
+	if *orderCol == "" {
+		*orderCol = "ID"
+	}
+	if *orderDir == "" {
+		*orderDir = "DESC"
 	}
 
-	order_p := paginator.Order(*order)
+	order_p := paginator.Order(*orderDir)
 
 	// create paginator for User model
-	p := CreatePaginator(paginator.Cursor{}, &order_p, limit)
+	p := CreatePaginator(orderCol, paginator.Cursor{}, &order_p, limit)
 
 	// find objects with pagination
 	result, cursor, err := p.Paginate(db, &objects)

@@ -8,11 +8,10 @@ export type AuthStoreState = {
 
 export const useAuthStore = defineStore({
   id: 'authStore',
-  state: () =>
-    ({
-      authUser: JSON.parse(localStorage.getItem('user') || 'null'),
-      authToken: localStorage.getItem('user_token') || null
-    } as AuthStoreState),
+  state: (): AuthStoreState => ({
+    authUser: JSON.parse(localStorage.getItem('user') || 'null'),
+    authToken: localStorage.getItem('user_token') || null
+  }),
   getters: {
     getAuthUser(): IUser | null {
       return this.authUser;
