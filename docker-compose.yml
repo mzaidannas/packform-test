@@ -14,7 +14,7 @@ services:
     ports:
       - 3000:3000
     environment:
-      DB_PORT: ${DB_PORTL-5432}
+      DB_PORT: ${DB_PORT:-5432}
       DB_HOST: ${DB_HOST:-postgres}
       DB_USER: ${DB_USER:-postgres}
       DB_PASSWORD: ${DB_PASSWORD:-password}
